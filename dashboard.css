@@ -1,0 +1,207 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+header {
+  background-color: #222;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+header button {
+  margin-left: 10px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background: #444;
+  color: white;
+  border-radius: 4px;
+}
+
+.cartes {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+}
+
+.carte {
+  border: 1px solid #ccc;
+  padding: 15px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  background: white;
+  width: 150px;
+  transition: box-shadow 0.2s;
+}
+
+body.dark .carte {
+  background: #333;
+  border-color: #555;
+}
+
+.carte:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.carte h3 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+}
+
+.carte p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+body.dark .carte p {
+  color: #aaa;
+}
+
+.carte.active {
+  border-color: #007bff;
+}
+
+.section {
+  padding: 0 20px 20px 20px;
+}
+
+.section h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.boutons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.boutons button {
+  padding: 6px 14px;
+  border: 1px solid #bbb;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+body.dark .boutons button {
+  background: #444;
+  color: white;
+  border-color: #666;
+}
+
+#galerie {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  position: relative;
+  height: 80px;
+  align-items: center;
+}
+
+.forme {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  border-radius: 10px;
+}
+
+#forme1 { background-color: red; }
+#forme2 { background-color: #5b8cff; cursor: pointer; }
+#forme3 { background-color: green; cursor: pointer; }
+#forme4 { background-color: purple; cursor: pointer; }
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.forme.rotating {
+  animation: rotate 0.8s linear infinite;
+}
+
+#notification {
+  display: block;
+  width: fit-content;
+  margin-top: 10px;
+  background: #333;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 1.3s ease, transform 1.3s ease;
+  pointer-events: none;
+}
+
+#notification.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.section-attr {
+  border: 1px solid #ccc;
+  padding: 15px;
+  width: 220px;
+  border-radius: 6px;
+  margin: 0 20px 20px 20px;
+}
+
+body.dark .section-attr {
+  border-color: #555;
+}
+
+.section-attr h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+
+.section-attr input {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.section-attr .boutons-attr {
+  display: flex;
+  gap: 8px;
+}
+
+.section-attr button {
+  padding: 5px 12px;
+  border: 1px solid #bbb;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+body.dark .section-attr button {
+  background: #444;
+  color: white;
+  border-color: #666;
+}

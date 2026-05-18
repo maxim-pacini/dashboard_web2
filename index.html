@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <title>Navbar + Home Dynamique</title>
-
-
 <style>
 
 /* =========================
@@ -71,13 +69,14 @@ header h1{
     list-style:none;
 }
 
-.sidebar li{
+.sidebar li {
     padding:14px;
     background:#333;
     margin-bottom:12px;
     border-radius:10px;
     cursor:pointer;
     transition:0.3s;
+    list-style: none;
 }
 
 .sidebar li:hover{
@@ -204,6 +203,47 @@ button{
     cursor:pointer;
 }
 
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark{
+    background:#1a1a2e;
+    color:#e0e0e0;
+}
+
+body.dark header{
+    background:#0d0d1a;
+}
+
+body.dark .sidebar{
+    background:#111;
+}
+
+body.dark .sidebar li{
+    background:#1e1e1e;
+}
+
+body.dark main{
+    background:#1a1a2e;
+}
+
+body.dark .statBox{
+    background:#2d2d3a;
+    color:#e0e0e0;
+}
+
+body.dark .fakePage{
+    background:#2d2d3a;
+    color:#e0e0e0;
+}
+
+.header-right{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
 </style>
 
 </head>
@@ -213,10 +253,10 @@ button{
 
     <h1>Application jQuery</h1>
 
-    <button id="toggleMenu">
-        ☰ Menu
-    </button>
-
+    <div class="header-right">
+        <button id="toggleMenu">☰ Menu</button>
+        <button id="btnDark">🌙 Dark Mode</button>
+    </div>
 </header>
 
 <div class="container">
@@ -236,13 +276,14 @@ button{
 
             </li>
 
-            <li class="navLink"
+            <a href="dashboard.html"><li class="navLink"
                 data-page="dashboardPage">
 
                 📊 Dashboard
 
-            </li>
 
+            </li>
+            </a>
             <li class="navLink"
                 data-page="profilePage">
 
@@ -415,49 +456,42 @@ button{
 
 
 <script>
+$(document).ready(function () {
 
-/* =========================
+  $("#btnDark").click(function () {
+    $("body").toggleClass("dark");
+    if ($("body").hasClass("dark")) {
+      $(this).text("☀️ Light Mode");
+    } else {
+      $(this).text("🌙 Dark Mode");
+    }
+  });
+/*===================
    NAVBAR CLIQUABLE
 ========================= */
 
-$(".").click(function(){
+$(".navLink").click(function(){
 
-    /*
-        Active le lien
-    */
-
-    $("")
-    .removeClass("");
+    $(".navLink")
+    .removeClass("activeNav");
 
     $(this)
-    .addClass("");
+    .addClass("activeNav");
 
 
-    /*
-        Récupère la page
-    */
-
-    let page = $(this).data("");
+    let page = $(this).data("page");
 
 
-    /*
-        Cache toutes les pages
-    */
-
-    $("")
-    .removeClass("")
+    $(".page")
+    .removeClass("activePage")
     .hide();
 
-
-    /*
-        Affiche la page cliquée
-    */
 
     $("#" + page)
 
     .fadeIn(500)
 
-    .addClass("");
+    .addClass("activePage");
 
 });
 
@@ -466,11 +500,11 @@ $(".").click(function(){
    TOGGLE MENU
 ========================= */
 
-$("").click(function(){
+$("#toggleMenu").click(function(){
 
-    $("").animate({
+    $(".sidebar").animate({
 
-        width:""
+        width:"toggle"
 
     },500);
 
@@ -483,7 +517,7 @@ $("").click(function(){
 
 $(".counter").each(function(){
 
-    let target = $(this).data("");
+    let target = $(this).data("target");
 
     let counter = $(this);
 
@@ -526,39 +560,40 @@ $(".counter").each(function(){
 
 setInterval(function(){
 
-    $("")
+    $(".c1")
 
     .animate({
-        top:""
+        top:"30px"
     },1000)
 
     .animate({
-        top:""
+        top:"20px"
     },1000);
 
 
     $(".c2")
 
     .animate({
-        right:""
+        right:"200px"
     },1000)
 
     .animate({
-        right:""
+        right:"180px"
     },1000);
 
 
     $(".c3")
 
     .animate({
-        left:""
+        left:"60px"
     },1000)
 
     .animate({
-        left:""
+        left:"40px"
     },1000);
 
 },2000);
+});
 
 </script>
 
