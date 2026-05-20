@@ -289,7 +289,7 @@ const REGEX = {
     //         au moins 1 minuscule, 1 majuscule, 1 chiffre, 1 caractère spécial
     // Indice : (?=...) = lookahead positif (vérifie sans consommer)
     //          (?=.*[A-Z]) = doit contenir au moins une majuscule quelque part
-    password: /REMPLACE_MOI/,
+    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/,
 
 };
 
