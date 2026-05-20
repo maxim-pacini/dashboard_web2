@@ -1,143 +1,91 @@
-/* =========================
-   NAVBAR CLIQUABLE
-========================= */
+// Dark mode
+$("#btn-tggl").click(function(){
+    $("body").toggleClass("dark");
 
-$(".").click(function(){
+    
+    // if ($(this)){
+    //     $(this).toggle($(this).html("&#127774;"));
+    // } else {
+    //     $(this).toggle($(this).html("&#127770;"));
+    // }
 
-    /*
-        Active le lien
-    */
+    
+    
+});
 
-    $("")
-    .removeClass("");
+// menu toggle
+$("#btn-menu").click(function(){
+    $(".sidebar").toggle("");
+})
 
+// Hover des cards
+$(".card").mouseenter(function(){
+    $(this).animate({width: "300px"}, 300);
+});
+$(".card").mouseleave(function(){
+    $(this).animate({width: "200px"}, 300);
+});
+
+// Active des cards
+$(".card").click(function () {
+    $(".card").removeClass("active");
+    $(this).addClass("active");
     $(this)
-    .addClass("");
+      .stop(true)
+      .animate({ top: "-20px" }, 120)
+      .animate({ top: "0px" }, 220);
+  });
 
+// Contrôles
 
-    /*
-        Récupère la page
-    */
+// Lancer l'animation
+$("#start").click(function(){
+    console.log('hello');
+    $("#a")
+    .animate({left: "120px"})
+    .animate({top: "120px"})
+    // .css({backroundColor:"#000000"})
+    .animate({left: "0px"})
+    .animate({top: "0px"})
+});
 
-    let page = $(this).data("");
+// Stop animation
+$("#stop").click(function(){
+    console.log('hello');
+    $("#a").stop(true);
+})
 
+// Masquer galerie
+$("#hidden").click(function(){
+    $(".blocks").fadeOut();
+});
 
-    /*
-        Cache toutes les pages
-    */
-
-    $("")
-    .removeClass("")
-    .hide();
-
-
-    /*
-        Affiche la page cliquée
-    */
-
-    $("#" + page)
-
-    .fadeIn(500)
-
-    .addClass("");
-
+// Afficher galerie
+$("#show").click(function(){
+    $(".blocks").fadeIn();
 });
 
 
-/* =========================
-   TOGGLE MENU
-========================= */
-
-$("").click(function(){
-
-    $("").animate({
-
-        width:""
-
-    },500);
-
+// Style blocks
+ 
+// Bleu block
+$("#b").click(function(){
+    $(this).animate({borderRadius: "50%"}, 300);
 });
 
 
-/* =========================
-   COUNTERS ANIMÉS
-========================= */
-
-$(".counter").each(function(){
-
-    let target = $(this).data("");
-
-    let counter = $(this);
-
-    $({countNum:0})
-
-    .animate({
-
-        countNum:target
-
-    },
-
-    {
-
-        duration:2000,
-
-        easing:"swing",
-
-        step:function(){
-
-            counter.text(
-                Math.floor(this.countNum)
-            );
-
-        },
-
-        complete:function(){
-
-            counter.text(this.countNum);
-
-        }
-
-    });
-
+ 
+// Notifcation
+$(".notif").click(function(){
+    $(".msg").toggle("");
 });
-
-
-/* =========================
-   HOME DYNAMIQUE
-========================= */
-
-setInterval(function(){
-
-    $("")
-
-    .animate({
-        top:""
-    },1000)
-
-    .animate({
-        top:""
-    },1000);
-
-
-    $(".c2")
-
-    .animate({
-        right:""
-    },1000)
-
-    .animate({
-        right:""
-    },1000);
-
-
-    $(".c3")
-
-    .animate({
-        left:""
-    },1000)
-
-    .animate({
-        left:""
-    },1000);
-
-},2000);
+ 
+// désactiver le champs
+$("#btn-dis").click(function(){
+    $("#champs").prop("disabled", true);
+})
+ 
+// activer le champs
+$("#btn-en").click(function(){
+    $("#champs").prop("disabled", false);
+})
