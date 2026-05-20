@@ -368,12 +368,12 @@
             // Règle : entre 3 et 16 caractères
             //         uniquement lettres (a-z, A-Z), chiffres, underscore _ ou tiret -
             // Indice : ^ = début, $ = fin, [groupe]{min,max}
-            username: /REMPLACE_MOI/,
+            username: /^[a-zA-Z0-9_-]{3,16}$/,
 
             // TODO 2 — Regex email
             // Règle : qqch @ qqch . qqch (au moins 2 lettres pour le domaine)
             // Indice : \. pour un vrai point, + = un ou plusieurs, {2,} = au moins 2
-            email: /REMPLACE_MOI/,
+            email: /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/,
 
             // TODO 3 — Regex password (la plus complexe !)
             // Règle : 8 caractères minimum
