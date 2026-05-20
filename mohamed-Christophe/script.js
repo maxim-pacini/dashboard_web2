@@ -166,4 +166,37 @@ $(document).ready(function () {
   $("#enable-btn").click(function () {
     $("#nom-input").removeAttr("disabled");
   });
+
+  $("#start-btn").click(function () {
+    $("#shape1")
+      .animate({ left: "150px" }, 400)
+      .animate({ top: "150px" }, 400)
+      .animate({ left: "0px" }, 400)
+      .animate({ top: "0px" }, 400);
+  });
+
+  $("#stop-btn").click(function () {
+    $("#shape1").stop(true);
+  });
+
+  $("#shape2").click(function () {
+    let cur = parseInt($("#shape2").css("border-radius"));
+    $("#shape2").animate({ borderRadius: cur >= 50 ? 10 : 50 }, 500);
+  });
+
+  $("#shape3").one("click", function () {
+    $("#shape3").animate({ left: "+=100px" }, 500);
+  });
+
+  $("#shape4").click(function () {
+    $({ deg: 0 }).animate(
+      { deg: 360 },
+      {
+        duration: 1000,
+        step: function (now) {
+          $("#shape4").css({ transform: "rotate(" + now + "deg)" });
+        },
+      },
+    );
+  });
 });
