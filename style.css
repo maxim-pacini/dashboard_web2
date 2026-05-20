@@ -41,27 +41,20 @@ button{
     border-radius:8px;
     cursor:pointer;
 }
+
 a {
     color: white;
     text-decoration: none;
 }
 
+/* HEADER section  */
 
-/* CLASS  */
-
-.container{
-    display:flex;
-}
-
-/* header section  */
-
-
-/* NAV-MENU section  */
+/*************** NAV-MENU section  ********************/
 
 .sidebar{
     display: flex;
     flex-direction: column;
-    width:250px;
+    /* width:250px; */
     min-height:100vh;
     background:#222;
     color:white;
@@ -70,6 +63,7 @@ a {
 
 .sidebar h2{
     margin-bottom:20px;
+    width: 8em;;
 }
 
 .sidebar a{
@@ -88,6 +82,114 @@ a {
 
 .activeNav{
     background:royalblue !important;
+}
+
+/************************* HOME PAGE ***************** */
+
+.page{
+    display:none;
+}
+
+.activePage{
+    display:block;
+}
+
+
+.hero{
+    background:linear-gradient(135deg, royalblue, purple);
+    color:white;
+    padding:60px;
+    border-radius:20px;
+    margin-bottom:40px;
+    position:relative;
+    overflow:hidden;
+}
+
+.hero h2{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+.hero p{
+    width:70%;
+    line-height:1.7;
+}
+
+/* =========================
+   CIRCLES
+========================= */
+
+.circle{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:white;
+    opacity:0.2;
+    position:absolute;
+}
+
+.c1{
+    top:20px;
+    right:50px;
+}
+
+.c2{
+    bottom:30px;
+    right:180px;
+}
+
+.c3{
+    top:120px;
+    left:40px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.statBox{
+    background:white;
+    flex:1;
+    min-width:220px;
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+}
+
+.statBox h3{
+    font-size:40px;
+    color:royalblue;
+    margin-bottom:10px;
+}
+
+/* =========================
+   AUTRES PAGES
+========================= */
+
+.fakePage{
+    background:white;
+    padding:40px;
+    border-radius:20px;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+
+/* CLASS  */
+
+.container{
+    display:flex;
 }
 
 
