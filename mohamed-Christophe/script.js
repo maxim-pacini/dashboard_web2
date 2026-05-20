@@ -172,7 +172,9 @@ $(document).ready(function () {
       .animate({ left: "150px" }, 400)
       .animate({ top: "150px" }, 400)
       .animate({ left: "0px" }, 400)
-      .animate({ top: "0px" }, 400);
+      .animate({ top: "0px" }, 400, function () {
+        $(this).css({ backgroundColor: "black" });
+      });
   });
 
   $("#stop-btn").click(function () {
