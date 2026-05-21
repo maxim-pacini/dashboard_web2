@@ -506,23 +506,47 @@
             // +1 longueur >= 8
             if (valeur.length >= 8) {
                 score++;
+                $("#f-password").find(".hint").text(" 1 majuscule, 1 chiffre, 1 spécial")
+                $("#f-password").addClass("error");
+            } else {
+                $("#f-password").find(".hint").text(" 8+ caractères, 1 majuscule, 1 chiffre, 1 spécial")
+                $("#f-password").removeClass("error");
             }
 
             // +1 minuscule ET majuscule
             if (/[a-z]/.test(valeur) && /[A-Z]/.test(valeur)) {
                 score++;
+                $("#f-password").find(".hint").text(" 8+ caractères, 1 chiffre, 1 spécial")
+                $("#f-password").addClass("error");
+            } else {
+                $("#f-password").find(".hint").text(" 8+ caractères, 1 majuscule, 1 chiffre, 1 spécial")
+                $("#f-password").removeClass("error");
             }
 
             // +1 chiffre
             if (/\d/.test(valeur)) {
                 score++;
+                $("#f-password").find(".hint").text(" 8+ caractères, 1 majuscule, 1 spécial")
+                $("#f-password").addClass("error");
+            } else {
+                $("#f-password").find(".hint").text(" 8+ caractères, 1 majuscule, 1 chiffre, 1 spécial")
+                $("#f-password").removeClass("error");
             }
 
             // +1 caractère spécial
             if (/[^\w\s]/.test(valeur)) {
                 score++;
+                $("#f-password").find(".hint").text(" 8+ caractères, 1 majuscule, 1 chiffre")
+                $("#f-password").addClass("error");
+            } else {
+                $("#f-password").find(".hint").text(" 8+ caractères, 1 majuscule, 1 chiffre, 1 spécial")
+                $("#f-password").removeClass("error");
             }
+            if (REGEX.password.test(valeur)) {
+                $("#f-password").find(".hint").text(" Mot de passe robuste")
+                $("#f-password").addClass("ok");
 
+            }
             // Mise à jour de la jauge
             $(".strength span").each(function (i) {
 
@@ -630,7 +654,74 @@
 
         $("#loginBtn").on("click", function () {
 
-            // Ton code ici ↓
+            $("#loginBtn").on("click", function () {
+
+
+                if (!registeredUser) {
+
+                    $("#loginFlash")
+                        .text("Inscris-toi d'abord")
+                        .removeClass("ok")
+                        .addClass("err")
+                        .slideDown(300);
+
+                    $("#loginBtn").addClass("shake");
+
+                    setTimeout(() => {
+                        $("#loginBtn").removeClass("shake");
+                    }, 200);
+
+                    return;
+                }
+
+                const email = $("#login-email").val();
+                const password = $("#login-password").val();
+
+
+                if (!REGEX.email.test(email)) {
+
+                    $("#loginFlash")
+                        .text("Email invalide")
+                        .removeClass("ok")
+                        .addClass("err")
+                        .slideDown(300);
+
+                    $("#loginBtn").addClass("shake");
+
+                    setTimeout(() => {
+                        $("#loginBtn").removeClass("shake");
+                    }, 200);
+
+                    return;
+                }
+
+
+                if (
+                    email === registeredUser.email &&
+                    password === registeredUser.password
+                ) {
+
+
+                    doLogin();
+
+                } else {
+
+
+                    $("#loginFlash")
+                        .text("Email ou mot de passe incorrect")
+                        .removeClass("ok")
+                        .addClass("err")
+                        .slideDown(300);
+
+                    $("#loginBtn").addClass("shake");
+
+                    setTimeout(() => {
+                        $("#loginBtn").removeClass("shake");
+                    }, 200);
+                }
+
+            });
+
 
         });
 
