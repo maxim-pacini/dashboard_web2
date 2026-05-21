@@ -406,8 +406,8 @@
 
 
         /* ============================================================
-           VALIDATION TEMPS RÉEL — username
-        ============================================================ */
+   VALIDATION TEMPS RÉEL — username
+============================================================ */
 
         // TODO 5 — Sur l'événement "keyup" de #signup-username :
         //   - Récupérer la valeur avec .val()
@@ -417,9 +417,25 @@
         //   - Penser à .removeClass("ok error") au début pour reset l'état précédent
 
         $("#signup-username").on("keyup", function () {
-
             // Ton code ici ↓
+            const val = $(this).val();
+            const $field = $("#f-username");
+            const $hint = $field.find(".hint");
 
+            $field.removeClass("ok error");
+
+            if (val === "") {
+                $hint.text("3 à 16 caractères : lettres, chiffres, _ ou -");
+                return;
+            }
+
+            if (REGEX.username.test(val)) {
+                $field.addClass("ok");
+                $hint.text("Pseudo valide");
+            } else {
+                $field.addClass("error");
+                $hint.text("✗ 3-16 caractères, uniquement lettres, chiffres, _ ou -");
+            }
         });
 
 
@@ -431,9 +447,25 @@
         //           Tester avec REGEX.email.test(valeur)
 
         $("#signup-email").on("keyup", function () {
-
             // Ton code ici ↓
+            const val = $(this).val();
+            const $field = $("#f-email");
+            const $hint = $field.find(".hint");
 
+            $field.removeClass("ok error");
+
+            if (val === "") {
+                $hint.text("Format : nom@domaine.ext");
+                return;
+            }
+
+            if (REGEX.email.test(val)) {
+                $field.addClass("ok");
+                $hint.text("Email valide");
+            } else {
+                $field.addClass("error");
+                $hint.text("✗ Format invalide (ex : nom@domaine.com)");
+            }
         });
 
 
