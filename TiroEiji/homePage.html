@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://code.jquery.com/jquery-4.0.0.js" integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="style.css">
+
+
+
+<title>Navbar + Home Dynamique</title>
+
+
+</head>
+<body>
+
+<header>
+
+    <h1>Application jQuery</h1>
+
+    <div class="btns">
+        <button id="btn-menu">☰ Menu</button>
+        <button class="btn-tggl" id="btn-tggl">&#127770;</button>
+    </div>
+    
+
+</header>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <h2>Navigation</h2>
+
+            <a class="navLink activeNav"
+                data-page="homePage" href="homePage.html">
+
+                🏠 Home
+
+            </a>
+
+            <a class="navLink"
+                data-page="dashboardPage" href="dashBoard.html">
+
+                📊 Dashboard
+
+            </a>
+
+            <a class="navLink"
+                data-page="profilePage">
+
+                👤 Profil
+
+            </a>
+
+            <a class="navLink"
+                data-page="settingsPage">
+
+                ⚙️ Paramètres
+
+            </a>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main>
+
+        <!-- =========================
+             HOME PAGE
+        ========================= -->
+
+        <section id="homePage"
+                 class="page activePage">
+
+            <div class="hero">
+
+                <div class="circle c1"></div>
+                <div class="circle c2"></div>
+                <div class="circle c3"></div>
+
+                <h2>Bienvenue 🚀</h2>
+
+                <p>
+
+                    Ceci est une page Home dynamique
+                    créée avec jQuery.
+
+                    Les cercles bougent automatiquement
+                    et les compteurs sont animés.
+
+                </p>
+
+            </div>
+
+
+            <!-- STATS -->
+
+            <div class="stats">
+
+                <div class="statBox">
+
+                    <h3 class="counter"
+                        data-target="250">
+
+                        0
+
+                    </h3>
+
+                    <p>Utilisateurs</p>
+
+                </div>
+
+
+                <div class="statBox">
+
+                    <h3 class="counter"
+                        data-target="120">
+
+                        0
+
+                    </h3>
+
+                    <p>Messages</p>
+
+                </div>
+
+
+                <div class="statBox">
+
+                    <h3 class="counter"
+                        data-target="95">
+
+                        0
+
+                    </h3>
+
+                    <p>Projets</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             DASHBOARD
+        ========================= -->
+
+        <section id="dashboardPage"
+                 class="page">
+
+            <div class="fakePage">
+
+                <h2>Dashboard</h2>
+
+                <br>
+
+                <p>
+                    Contenu du dashboard.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PROFILE
+        ========================= -->
+
+        <section id="profilePage"
+                 class="page">
+
+            <div class="fakePage">
+
+                <h2>Profil</h2>
+
+                <br>
+
+                <p>
+                    Contenu du profil.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             SETTINGS
+        ========================= -->
+
+        <section id="settingsPage"
+                 class="page">
+
+            <div class="fakePage">
+
+                <h2>Paramètres</h2>
+
+                <br>
+
+                <p>
+                    Contenu des paramètres.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
