@@ -7,7 +7,6 @@
 }
 /* PREREGLAGE*/
 *{
-    /* font-family: 'super', sans-serif; */
     font-family: 'Montserrat', sans-serif;
     margin: 0;
     box-sizing: border-box;
@@ -15,9 +14,7 @@
 /* --------------------------------------------------------------------------------------- */
 
 /* ACCUEIL BALISE*/
-body{
-    
-}
+
 header{
     display: flex;
     justify-content: center;
@@ -30,7 +27,9 @@ main{
     flex-direction: column;
     width: 100vw;
 }
+
 /* ACCUEIL CLASS */
+
 .header{
     height: 90px;
     width: 100vw;
@@ -38,14 +37,12 @@ main{
     color: white;
 }
 .name-page{
-    /* background-color: red; */
     height: 100%;
     width: 80vw;
     line-height: 90px;
     padding: 0 0 0 20px;
 }
 .button-page{
-    /* background-color: purple; */
     height: 100%;
     width: 20vw;
     display: flex;
