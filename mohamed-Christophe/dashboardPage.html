@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="./script.js"></script>
+    <header>
+        <h1>Dashboard jQuery</h1>
+        <div class="header-actions">
+            <button class="btn" id="menu-btn"> Menu</button>
+            <button class="btn" id="dark-btn"> Dark Mode</button>
+        </div>
+    </header>
+    <main>
+        <div class="cards">
+            <div class="card active">
+                <h3>Carte 1</h3>
+                <p>Animation jQuery</p>
+            </div>
+            <div class="card">
+                <h3>Carte 2</h3>
+                <p>Manipulation DOM</p>
+            </div>
+            <div class="card">
+                <h3>Carte 3</h3>
+                <p>Effets visuels</p>
+            </div>
+        </div>
+
+
+        <h2 class="titre-controle">Contrôles</h2>
+        <div class="controls">
+            <button class="btn" id="start-btn">Lancer animation</button>
+            <button class="btn" id="stop-btn">Stop animation</button>
+            <button class="btn" id="hide-btn">Masquer galerie</button>
+            <button class="btn" id="show-btn">Afficher galerie</button>
+        </div>
+
+        <div class="shapes" id="gallery">
+            <div class="shape red" id="shape1"></div>
+            <div class="shape blue" id="shape2"></div>
+            <div class="shape green" id="shape3"></div>
+            <div class="shape purple" id="shape4"></div>
+        </div>
+
+
+        <button class="btn" id="notif-btn">Afficher notification</button>
+
+        <div class="panel">
+            <h2>Manipulation attr()</h2>
+            <input type="text" id="nom-input" placeholder="Votre nom">
+            <div class="row">
+                <button class="btn" id="disable-btn">Disable</button>
+                <button class="btn" id="enable-btn">Enable</button>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

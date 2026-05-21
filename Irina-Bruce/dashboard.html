@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard jQuery</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Dashboard jQuery</h1>
+    <div>
+      <button id="btnMenu"> Menu</button>
+      <button id="btnDark">🌙 Dark Mode</button>
+    </div>
+  </header>
+
+  <div class="cartes">
+    <div class="carte active" id="carte1">
+      <h3>Carte 1</h3>
+      <p>Animation jQuery</p>
+    </div>
+    <div class="carte" id="carte2">
+      <h3>Carte 2</h3>
+      <p>Manipulation DOM</p>
+    </div>
+    <div class="carte" id="carte3">
+      <h3>Carte 3</h3>
+      <p>Effets visuels</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Contrôles</h2>
+    <div class="boutons">
+      <button id="btnLancer">Lancer animation</button>
+      <button id="btnStop">Stop animation</button>
+      <button id="btnMasquer">Masquer galerie</button>
+      <button id="btnAfficher">Afficher galerie</button>
+    </div>
+
+    <div id="galerie">
+      <div class="forme" id="forme1"></div>
+      <div class="forme" id="forme2"></div>
+      <div class="forme" id="forme3"></div>
+      <div class="forme" id="forme4"></div>
+    </div>
+
+    <button id="btnNotif">Afficher notification</button>
+    <div id="notification">Bienvenue sur le Dashboard jquery !</div>
+  </div>
+
+  <div class="section-attr">
+    <h3>Manipulation attr()</h3>
+    <input type="text" id="monInput" placeholder="Votre nom">
+    <div class="boutons-attr">
+      <button id="btnDisable">Disable</button>
+      <button id="btnEnable">Enable</button>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+
+</body>
+</html>
