@@ -396,12 +396,24 @@
         //   4. Cacher tous les formulaires, afficher le bon avec fadeIn(300)
 
         $(".tab").on("click", function () {
-            $(".tab").removeClass("active")
-            $(".tab").addClass("active")
-            const users = $(this).data("form")
-            $("#signupForm").fadeOut(500, function () {
-                $("#loginForm").fadeIn();
-            })
+
+            $(".tab").removeClass("active");
+            $(this).addClass("active");
+            const form = $(this).data("form");
+            if (form == "loginForm") {
+
+                $("#signupForm").fadeOut(500, function () {
+                    $("#loginForm").fadeIn();
+                });
+
+            } else {
+
+                $("#loginForm").fadeOut(500, function () {
+                    $("#signupForm").fadeIn();
+                });
+
+            }
+
         });
 
 
@@ -556,7 +568,51 @@
 
         $("#signupBtn").on("click", function () {
 
-            // Ton code ici ↓
+            if (
+                REGEX.username.test($("#signup-username").val()) &&
+                REGEX.email.test($("#signup-email").val()) &&
+                REGEX.password.test($("#signup-password").val())
+            ) {
+
+                registeredUser = {
+                    username: $("#signup-username").val(),
+                    email: $("#signup-email").val(),
+                    password: $("#signup-password").val()
+                };
+
+                $("#signupFlash")
+                    .text("Votre compte a été inscrit avec succès")
+                    .removeClass("err")
+                    .addClass("ok")
+                    .slideDown("slow")
+
+                $(this)
+                    .removeClass("err")
+                    .addClass("ok");
+
+                // Attendre 1 seconde avant le login
+                setTimeout(function () {
+                    doLogin();
+                }, 1000);
+
+            } else {
+                $("#signupBtn").addClass("shake");
+                setTimeout(() => {
+                    $("#signupBtn").removeClass("shake");
+                }, 200);
+                $("#signupFlash")
+                    .text("Erreur lors de l'inscription")
+                    .removeClass("ok")
+                    .addClass("err")
+                    .slideDown("slow")
+                setTimeout(function () {
+                    $("#signupFlash").slideUp()
+                }, 5000)
+                $(this)
+                    .removeClass("ok")
+                    .addClass("err");
+            }
+
 
         });
 
