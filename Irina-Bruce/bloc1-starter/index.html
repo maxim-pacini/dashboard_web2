@@ -130,6 +130,11 @@ let isLoggedIn = false;
    a tapé est correct ou pas. Par exemple, un email doit contenir
    un "@" et un ".", un mot de passe doit être assez long, etc.
 ============================================================ */
+    // TODO 1 — Regex username
+    // Règle : entre 3 et 16 caractères
+    //         uniquement lettres (a-z, A-Z), chiffres, underscore _ ou tiret -
+    // Indice : ^ = début, $ = fin, [groupe]{min,max}
+
 const REGEX = {
 
     // Règle pour le nom d'utilisateur :
@@ -137,10 +142,19 @@ const REGEX = {
     // uniquement des lettres, des chiffres, _ ou -
     username: /^[a-zA-Z0-9_-]{3,16}$/,
 
+    // TODO 2 — Regex email
+    // Règle : qqch @ qqch . qqch (au moins 2 lettres pour le domaine)
+    // Indice : \. pour un vrai point, + = un ou plusieurs, {2,} = au moins 2
     // Règle pour l'email :
+
     // doit ressembler à quelquechose@quelquechose.fr (ou .com, etc.)
     email: /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/,
 
+    // TODO 3 — Regex password (la plus complexe !)
+    // Règle : 8 caractères minimum
+    //         au moins 1 minuscule, 1 majuscule, 1 chiffre, 1 caractère spécial
+    // Indice : (?=...) = lookahead positif (vérifie sans consommer)
+    //          (?=.*[A-Z]) = doit contenir au moins une majuscule quelque part
     // Règle pour le mot de passe :
     // doit avoir au moins 8 caractères,
     // avec au moins 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole spécial
@@ -154,6 +168,11 @@ const REGEX = {
    Quand on clique sur un onglet, on doit afficher le bon
    formulaire et mettre en surbrillance l'onglet cliqué.
 ============================================================ */
+// TODO 4 — Au clic sur un .tab :
+//   1. Retirer la classe "active" de tous les .tab
+//   2. Ajouter "active" sur $(this)
+//   3. Lire l'attribut data-form avec $(this).data("form")
+//   4. Cacher tous les formulaires, afficher le bon avec fadeIn(300)
 
 $(".tab").on("click", function() {
     // On enlève la surbrillance de tous les onglets
@@ -180,6 +199,12 @@ $(".tab").on("click", function() {
    Chaque fois que l'utilisateur tape une lettre dans le champ
    "Nom d'utilisateur", on vérifie immédiatement si c'est valide.
 ============================================================ */
+// TODO 5 — Sur l'événement "keyup" de #signup-username :
+//   - Récupérer la valeur avec .val()
+//   - Tester avec REGEX.username.test(valeur)
+//   - Si valide → ajouter classe "ok" sur #f-username, message positif dans .hint
+//   - Si invalide → ajouter classe "error", message d'erreur précis dans .hint
+//   - Penser à .removeClass("ok error") au début pour reset l'état précédent
 
 $("#signup-username").on("keyup", function() {
 
@@ -220,7 +245,8 @@ $("#signup-username").on("keyup", function() {
    Même principe que pour le nom d'utilisateur, mais
    cette fois on vérifie que l'email a le bon format.
 ============================================================ */
-
+// TODO 6 — Même logique que le username, pour #signup-email
+//           Tester avec REGEX.email.test(valeur)
 $("#signup-email").on("keyup", function() {
 
     // On récupère ce que l'utilisateur a tapé dans le champ email
@@ -261,6 +287,19 @@ $("#signup-email").on("keyup", function() {
    on calcule à quel point son mot de passe est solide,
    et on met à jour la petite barre de force visuelle.
 ============================================================ */
+// TODO 7 — Sur "keyup" de #signup-password :
+//   a) Calculer un score de 0 à 4 :
+//      +1 si longueur >= 8
+//      +1 si contient minuscule ET majuscule
+//      +1 si contient un chiffre
+//      +1 si contient un caractère spécial
+//
+//   b) Mettre à jour la jauge .strength span :
+//      Utilise .each(function(i){...}) pour boucler sur les 4 spans
+//      Si i < score → ajouter la bonne classe (faible / moyen / fort)
+//      Sinon retirer toutes les classes
+//
+//   c) Valider ou invalider le champ avec REGEX.password.test(valeur)
 
 $("#signup-password").on("keyup", function() {
 
@@ -335,6 +374,14 @@ $("#signup-password").on("keyup", function() {
    Quand l'utilisateur clique sur le bouton d'inscription,
    on vérifie que tout est correct avant de créer le compte.
 ============================================================ */
+// TODO 8 — Au clic sur #signupBtn :
+//   1. Lire les 3 valeurs (username, email, password)
+//   2. Tester les 3 regex
+//   3. Si erreurs → collecter dans un tableau, shake sur le bouton,
+//      afficher dans #signupFlash (classe "err") avec .slideDown(300)
+//   4. Si tout OK → stocker dans registeredUser = { username, email, password }
+//      Afficher message succès dans #signupFlash (classe "ok")
+//      Après 800ms, appeler doLogin()
 
 $("#signupBtn").on("click", function() {
 
@@ -397,6 +444,12 @@ $("#signupBtn").on("click", function() {
    on vérifie que l'email et le mot de passe correspondent
    bien au compte qui a été créé.
 ============================================================ */
+// TODO 9 — Au clic sur #loginBtn :
+//   1. Vérifier que registeredUser existe (sinon → message "inscris-toi d'abord")
+//   2. Vérifier que l'email est valide (REGEX.email)
+//   3. Comparer email + password avec registeredUser.email / .password
+//   4. Si OK → appeler doLogin()
+//   5. Sinon → shake + flash "err"
 
 $("#loginBtn").on("click", function() {
 
