@@ -180,6 +180,12 @@ $(document).ready(function () {
   $("#stop-btn").click(function () {
     $("#shape1").stop(true);
   });
+  $("#hide-btn").click(function () {
+    $("#gallery").slideUp();
+  });
+  $("#show-btn").click(function () {
+    $("#gallery").slideDown();
+  });
 
   $("#shape2").click(function () {
     let cur = parseInt($("#shape2").css("border-radius"));
