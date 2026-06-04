@@ -72,5 +72,34 @@ $(document).ready(function(){
         $("#nom").prop("disabled", false);
     });
 
+    /* =========================
+   NAVBAR CLIQUABLE
+========================= */
+
+$(".navLink").click(function(){
+ 
+        /* Active le lien */
+        $(".navLink").removeClass("activeNav");
+        $(this).addClass("activeNav");
+ 
+        /* Récupère la page */
+        let page = $(this).data("page");
+ 
+        /* Cache toutes les pages */
+        $(".page").removeClass("activePage").hide();
+ 
+        /* Affiche la page cliquée */
+        $("#" + page).fadeIn(500).addClass("activePage");
+    });
+
+/* =========================
+   TOGGLE MENU
+========================= */
+
+    $("#toggleMenu").click(function(){
+        $(".sidebar").animate({
+            width:"toggle"
+        },500);
+    });
 
 });
