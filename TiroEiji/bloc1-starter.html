@@ -176,8 +176,8 @@ body {
 
     <!-- TABS -->
     <div class="tabs">
-        <button class="tab active" data-form="signupForm">Inscription</button>
-        <button class="tab"        data-form="loginForm">Connexion</button>
+        <button class="tab A active" data-form="signupForm">Inscription</button>
+        <button class="tab B"        data-form="loginForm">Connexion</button>
     </div>
 
 
@@ -312,16 +312,24 @@ const REGEX = {
 //   3. Lire l'attribut data-form avec $(this).data("form")
 //   4. Cacher tous les formulaires, afficher le bon avec fadeIn(300)
 
-$(".tab").on("click", function() {
-    $(".tab").toggleClass("active");
-    $(".signupForm").removeClass("show");
-    $(".signupForm").toggleClass("hide");
-    $('.loginForm').toggleClass("show");
-    $(".loginForm").removeClass("hide");
+$(".B").on("click", function() {
     
-    // Ton code ici ↓
-
+    $(".tab").toggleClass("active");
+    $(".signupForm").hide("", function(){
+        $(".loginForm").show("");
+    });
+    
 });
+
+$(".A").on("click", function() {
+    
+    $(".tab").toggleClass("active");
+    $(".loginForm").hide("", function(){
+        $(".signupForm").show("");
+    });
+    
+});
+
 
 
 /* ============================================================
