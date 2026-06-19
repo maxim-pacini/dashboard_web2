@@ -365,7 +365,7 @@
             $("#" + pageActive).fadeIn(400)
             $("#toast").html("<p>" + pageActive + "</p>").show().delay(1800).fadeOut(400)
             if (visitedPages.length <= 5) {
-                visitedPages.add(pageId);
+                visitedPages.add(pageActive);
                 // 2. Calculer le pourcentage (en supposant 5 pages au total)
                 let pct = (visitedPages.size / 5) * 100;
                 // 3. Animer la largeur de #progressFill
