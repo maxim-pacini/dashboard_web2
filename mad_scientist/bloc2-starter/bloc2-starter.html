@@ -276,7 +276,7 @@ const visitedPages = new Set(["homePage"]); // Home visitée par défaut
    TODO 1 — Navigation par clic sur .navLink
    ─────────────────────────────────────────
    Quand on clique sur un lien de la sidebar :
-
+    
    ÉTAPE A — Gérer l'état actif du lien cliqué
      → Retirer "activeNav" de tous les .navLink
      → Ajouter "activeNav" sur $(this)
@@ -301,10 +301,15 @@ const visitedPages = new Set(["homePage"]); // Home visitée par défaut
      → Calculer le % : visitedPages.size / 5 * 100
      → Animer #progressFill avec .animate({width: pct+"%"}, 400)
 ============================================================ */
-
+// Ton code ici ↓
 $(".navLink").on("click", function() {
+$(".navLink").removeClass("activeNav");
+let nawdata = $(this).data("page");
+$("#homePage, #dashboardPage, #coursePage, #profilePage, #settingsPage").hide();
+$("#" + nawdata).fadeIn(400);
+$("#toast").text(nawdata).show().delay(1800).fadeOut(400);
+$(this).addClass("activeNav");
 
-    // Ton code ici ↓
 
 });
 
@@ -320,11 +325,11 @@ $(".navLink").on("click", function() {
      (Note : avec display:flex sur .container, préférer
       animate width ou toggleClass avec overflow:hidden)
 ============================================================ */
+/*En jQuery, la fonction toggle() est une méthode très populaire qui permet d'alterner l'affichage ou le masquage d'un élément. En résumé, si l'élément est visible, la fonction le cache ; s'il est masqué, elle l'affiche. Cela permet de créer des effets de bascule très simplement*/
 
 $("#toggleMenu").on("click", function() {
 
-    // Ton code ici ↓
-
+    $("#sidebar").animate({ width: "toggle" }, 400);
 });
 
 </script>
