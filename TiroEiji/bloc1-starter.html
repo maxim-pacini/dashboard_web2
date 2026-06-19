@@ -273,6 +273,7 @@ body {
 ============================================================ */
 // let registeredUser = { username, email, password };
 let isLoggedIn = false;
+let registeredUser = null;
 
 
 /* ============================================================
@@ -298,7 +299,11 @@ const REGEX = {
             // Indice : (?=...) = lookahead positif (vérifie sans consommer)
             //          (?=.*[A-Z]) = doit contenir au moins une majuscule quelque part
             password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[?*=.@#$%!^":,:;<'>+-_]).{8,}$/,
- 
+
+            hasLower:   /[a-z]/,
+            hasUpper:   /[A-Z]/,
+            hasDigit:   /\d/,
+            hasSpecial: /[!@#$%^&*()_\-+=<>?/.,;:]/,
 };
 
 
@@ -349,7 +354,24 @@ $(".A").on("click", function() {
 $("#signup-username").on("keyup", function() {
 
     // Ton code ici ↓
-   
+    const val   = $(this).val();
+    const field = $("#f-username");
+
+    // Important : toujours reset avant de retester
+    field.removeClass("ok error");
+
+    if (val.length === 0) {
+        field.find(".hint").text("3 à 16 caractères : lettres, chiffres, _ ou -");
+    } else if (REGEX.username.test(val)) {
+        field.addClass("ok");
+        field.find(".hint").text("Nom valide");
+    } else {
+        field.addClass("error");
+        // Message d'erreur précis selon le problème
+        if (val.length < 3)       field.find(".hint").text("Trop court (min 3 caractères)");
+        else if (val.length > 16) field.find(".hint").text("Trop long (max 16 caractères)");
+        else                      field.find(".hint").text("Caractères interdits — lettres/chiffres/_/- uniquement");
+    }
 });
 
 
@@ -363,19 +385,20 @@ $("#signup-username").on("keyup", function() {
 $("#signup-email").on("keyup", function() {
 
     // Ton code ici ↓
-const val = $(this).val();
-const field = $("#f-email");
-field.removeClass("ok error");
+const val   = $(this).val();
+    const field = $("#f-email");
 
-if (val.lenght === 0){
-    field.find(".hint").text("Format email standard requis");
-}else if (REGEX.email.test(val)){
-    field.addClass('ok');
-    field.find(".hint").text("email valide");
-}else {
-    field.addClass("error");
-    field.find('.hint').text('Format invalide - ex: ^re,omédomaine.com');
- c }
+    field.removeClass("ok error");
+
+    if (val.length === 0) {
+        field.find(".hint").text("Format email standard requis");
+    } else if (REGEX.email.test(val)) {
+        field.addClass("ok");
+        field.find(".hint").text("Email valide");
+    } else {
+        field.addClass("error");
+        field.find(".hint").text("Format invalide — ex: prenom@domaine.com");
+    }
 });
 
 
@@ -400,16 +423,46 @@ if (val.lenght === 0){
 $("#signup-password").on("keyup", function() {
 
     // Ton code ici ↓
-const val = $(this).val();
-const field = $("#f-email");
+    const val   = $(this).val();
+    const field = $("#f-password");
 
-//calculer le score 
-let score = 0;
-if (val.length >= 8) score ++;
-if (REGEX.hasLower.test(val)) && if (REGEX.hasUpper.test(val)) score ++;
-if (REGEX.hasDigit.test(val)) score++;
-if (REGEX.hasSpecial.test(val)) score++;
+    // ── A) Calcul du score ──────────────────────────────
+    let score = 0;
+    if (val.length >= 8)              score++;
+    if (REGEX.hasUpper.test(val) && REGEX.hasLower.test(val)) score++;
+    if (REGEX.hasDigit.test(val))     score++;
+    if (REGEX.hasSpecial.test(val))   score++;
 
+    // ── B) Mise à jour de la jauge ──────────────────────
+    // .each(function(i)) — i = index du span (0, 1, 2, 3)
+    $(".strength span").each(function(i) {
+        $(this).removeClass("faible moyen fort");
+        if (i < score) {
+            if (score <= 1)      $(this).addClass("faible");
+            else if (score <= 3) $(this).addClass("moyen");
+            else                 $(this).addClass("fort");
+        }
+    });
+
+    // ── C) Validation du champ ──────────────────────────
+    field.removeClass("ok error");
+
+    if (val.length === 0) {
+        field.find(".hint").text("8+ caractères, 1 majuscule, 1 chiffre, 1 spécial");
+    } else if (REGEX.password.test(val)) {
+        field.addClass("ok");
+        field.find(".hint").text("Mot de passe robuste");
+    } else {
+        field.addClass("error");
+        // Message ciblé selon ce qui manque
+        const missing = [];
+        if (val.length < 8)              missing.push("8+ caractères");
+        if (!REGEX.hasUpper.test(val))   missing.push("majuscule");
+        if (!REGEX.hasLower.test(val))   missing.push("minuscule");
+        if (!REGEX.hasDigit.test(val))   missing.push("chiffre");
+        if (!REGEX.hasSpecial.test(val)) missing.push("caractère spécial");
+        field.find(".hint").text("Manque : " + missing.join(", "));
+    }
 //
 });
 
@@ -430,22 +483,40 @@ if (REGEX.hasSpecial.test(val)) score++;
 $("#signupBtn").on("click", function() {
 
     // Ton code ici ↓
-    const username = $('signup-username').val();
-    const email = $('signup-email').val();
-    const password = $('signup-password').val();
-    const btn = $(this);
+    const username = $("#signup-username").val();
+    const email    = $("#signup-email").val();
+    const password = $("#signup-password").val();
+    const $btn     = $(this);
 
-    // Validation finale
-    const error = [];
+    // Validation finale (même si le temps réel a déjà tourné)
+    const errors = [];
     if (!REGEX.username.test(username)) errors.push("Nom d'utilisateur invalide");
-    if (!REGEX.email.test(email)) errors.push("Email invalide");
+    if (!REGEX.email.test(email))       errors.push("Email invalide");
     if (!REGEX.password.test(password)) errors.push("Mot de passe trop faible");
 
-    // Affichage des erre    urs
-    $("signupFlash")
-        .removeClass('ok').addClass("err")
-        .text(" ! " + error.join(", "))
-        .slideDown(300);  
+    if (errors.length > 0) {
+        // Animation shake sur le bouton
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        // Affichage des erreurs
+        $("#signupFlash")
+            .removeClass("ok").addClass("err")
+            .text("⚠ " + errors.join(" · "))
+            .slideDown(300);
+        return; // ← IMPORTANT : stoppe l'exécution ici
+    }
+
+    // Tout est valide : on enregistre le compte
+    registeredUser = { username, email, password,
+        createdAt: new Date().toLocaleDateString("fr-FR") };
+
+    $("#signupFlash")
+        .removeClass("err").addClass("ok")
+        .text("✓ Compte créé ! Connexion en cours…")
+        .slideDown(300);
+
+    // Auto-login après un court délai
+    setTimeout(doLogin, 800);
 
 });
 
@@ -464,11 +535,41 @@ $("#signupBtn").on("click", function() {
 $("#loginBtn").on("click", function() {
 
     // Ton code ici ↓
-const email = $('#login-email').val();
-const $btn = $(this);
+    const email    = $("#login-email").val();
+    const password = $("#login-password").val();
+    const $btn     = $(this);
 
-    // pour le username
+    // Garde 1 : aucun compte enregistré
+    if (!registeredUser) {
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        $("#loginFlash").removeClass("ok").addClass("err")
+            .text("⚠ Aucun compte — inscris-toi d'abord").slideDown(300);
+        return;
+    }
 
+    // Garde 2 : email invalide
+    if (!REGEX.email.test(email)) {
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        $("#loginFlash").removeClass("ok").addClass("err")
+            .text("⚠ Email invalide").slideDown(300);
+        return;
+    }
+
+    // Garde 3 : mauvais identifiants
+    if (email !== registeredUser.email || password !== registeredUser.password) {
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        $("#loginFlash").removeClass("ok").addClass("err")
+            .text("⚠ Email ou mot de passe incorrect").slideDown(300);
+        return;
+    }
+
+    // Tout OK !
+    $("#loginFlash").removeClass("err").addClass("ok")
+        .text("✓ Connexion réussie").slideDown(300);
+    setTimeout(doLogin, 500);
 
 });
 
