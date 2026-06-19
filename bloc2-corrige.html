@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLOC 2 — CORRIGÉ — Navbar & Navigation jQuery</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Arial, sans-serif; background: #f4efe6; }
+
+.correction-banner {
+    background: #1aa179; color: white;
+    padding: 10px 30px; font-family: monospace;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    border-bottom: 3px solid #1a1a1a;
+    display: flex; align-items: center; gap: 10px;
+}
+.correction-banner .dot {
+    width: 10px; height: 10px; border-radius: 50%; background: white;
+}
+
+.app-header {
+    background: #1a1a1a; color: white; padding: 18px 30px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid #ff4d2e;
+}
+.app-header h1 { font-size: 20px; letter-spacing: 0.05em; }
+.menu-btn {
+    padding: 8px 18px; background: transparent;
+    border: 1px solid white; color: white;
+    font-family: monospace; font-size: 13px; letter-spacing: 0.1em;
+    cursor: pointer; transition: background 0.2s;
+}
+.menu-btn:hover { background: #ff4d2e; border-color: #ff4d2e; }
+
+.container { display: flex; min-height: calc(100vh - 110px); }
+
+.sidebar {
+    width: 240px; background: #222; color: white;
+    padding: 28px 16px; flex-shrink: 0; overflow: hidden;
+}
+.sidebar h3 {
+    font-family: monospace; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.15em; color: #7a7268; margin-bottom: 16px;
+}
+.sidebar ul { list-style: none; }
+.navLink {
+    padding: 14px 16px; margin-bottom: 6px; cursor: pointer;
+    border-radius: 6px; font-size: 15px;
+    display: flex; align-items: center; gap: 12px;
+    border: 2px solid transparent; transition: all 0.25s;
+}
+.navLink:hover { background: #333; transform: translateX(4px); }
+.navLink.activeNav { background: #ff4d2e; border-color: #ff4d2e; font-weight: bold; }
+
+.progress-section {
+    margin-top: 40px; padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.progress-section .label {
+    font-family: monospace; font-size: 11px; color: #7a7268;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+}
+.progress-track { height: 6px; background: #444; }
+.progress-fill {
+    height: 100%; background: #ff4d2e;
+    width: 0%; transition: width 0.5s;
+}
+
+main { flex: 1; padding: 40px; }
+.page { display: none; }
+.activePage { display: block; animation: pageIn 0.4s ease; }
+@keyframes pageIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-content {
+    background: white; border: 2px solid #1a1a1a; padding: 40px;
+}
+.page-content h2 { font-size: 40px; margin-bottom: 8px; }
+.page-content .num {
+    font-family: monospace; font-size: 11px; color: #7a7268;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+}
+.page-content p { color: #7a7268; margin-top: 12px; line-height: 1.6; }
+.badge {
+    display: inline-block; margin-top: 20px;
+    padding: 6px 14px; background: #1a1a1a; color: white;
+    font-family: monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+}
+
+/* Toast */
+#toast {
+    position: fixed; bottom: 30px; right: 30px;
+    background: #1a1a1a; color: white;
+    padding: 14px 20px; font-family: monospace; font-size: 13px;
+    border-left: 4px solid #ff4d2e; display: none; z-index: 999;
+}
+
+/* Panneaux d'explication */
+.expl-panel {
+    background: #fff9e6; border-left: 4px solid #ffd23f;
+    padding: 20px 24px; margin: 24px 0; font-size: 13px;
+    line-height: 1.7; display: none;
+}
+.expl-panel.visible { display: block; }
+.expl-panel h4 {
+    font-family: monospace; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: #1a1a1a; margin-bottom: 10px;
+}
+.expl-panel code {
+    background: #1a1a1a; color: #a3e635;
+    padding: 2px 6px; font-size: 12px; font-family: monospace;
+}
+.expl-panel .good { color: #1aa179; font-weight: bold; }
+.expl-panel .bad  { color: #ff4d2e; font-weight: bold; }
+.expl-panel .block {
+    background: #1a1a1a; color: #a3e635;
+    padding: 12px 16px; font-family: monospace;
+    font-size: 12px; line-height: 1.8; margin: 10px 0;
+}
+
+.expl-toggle {
+    display: inline-block; padding: 7px 14px;
+    background: #ffd23f; border: 2px solid #1a1a1a;
+    font-family: monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    cursor: pointer; margin: 6px 6px 0 0;
+    transition: background 0.2s;
+}
+.expl-toggle:hover { background: #f0c800; }
+
+footer {
+    margin-top: 0; padding: 18px 30px;
+    background: #1a1a1a; color: rgba(255,250,240,0.5);
+    text-align: center; font-family: monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    border-top: 3px solid #ff4d2e;
+}
+</style>
+</head>
+<body>
+
+<div class="correction-banner">
+    <span class="dot"></span>
+    Version corrigée — Bloc 2 / Navbar & Navigation jQuery
+</div>
+
+<header class="app-header">
+    <h1>jQuery Academy — Dashboard</h1>
+    <button class="menu-btn" id="toggleMenu">☰ Menu</button>
+</header>
+
+<div class="container">
+    <aside class="sidebar" id="sidebar">
+        <h3>Navigation</h3>
+        <ul>
+            <li class="navLink activeNav" data-page="homePage">🏠 Home</li>
+            <li class="navLink" data-page="dashboardPage">📊 Dashboard</li>
+            <li class="navLink" data-page="coursePage">📚 Cours jQuery</li>
+            <li class="navLink" data-page="profilePage">👤 Profil</li>
+            <li class="navLink" data-page="settingsPage">⚙️ Paramètres</li>
+        </ul>
+        <div class="progress-section">
+            <div class="label">Pages visitées</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <section id="homePage" class="page activePage">
+            <div class="page-content">
+                <div class="num">01 — Page active</div>
+                <h2>🏠 Home</h2>
+                <p>Bienvenue sur le dashboard ! Utilise la sidebar pour naviguer.</p>
+                <div class="badge">Page actuelle : Home</div>
+            </div>
+        </section>
+        <section id="dashboardPage" class="page">
+            <div class="page-content">
+                <div class="num">02 — Page active</div>
+                <h2>📊 Dashboard</h2>
+                <p>Contenu du tableau de bord.</p>
+                <div class="badge">Page actuelle : Dashboard</div>
+            </div>
+        </section>
+        <section id="coursePage" class="page">
+            <div class="page-content">
+                <div class="num">03 — Page active</div>
+                <h2>📚 Cours jQuery</h2>
+                <p>Le cours interactif jQuery.</p>
+                <div class="badge">Page actuelle : Cours jQuery</div>
+            </div>
+        </section>
+        <section id="profilePage" class="page">
+            <div class="page-content">
+                <div class="num">04 — Page active</div>
+                <h2>👤 Profil</h2>
+                <p>Informations du compte.</p>
+                <div class="badge">Page actuelle : Profil</div>
+            </div>
+        </section>
+        <section id="settingsPage" class="page">
+            <div class="page-content">
+                <div class="num">05 — Page active</div>
+                <h2>⚙️ Paramètres</h2>
+                <p>Configuration de l'application.</p>
+                <div class="badge">Page actuelle : Paramètres</div>
+            </div>
+        </section>
+
+        <!-- ── Panneaux d'explication ── -->
+        <div style="margin-top: 32px;">
+
+            <button class="expl-toggle" data-target="expl-nav">
+                📖 Explication — TODO 1 : Navigation par clic
+            </button>
+            <button class="expl-toggle" data-target="expl-toggle">
+                📖 Explication — TODO 2 : Toggle Menu
+            </button>
+            <button class="expl-toggle" data-target="expl-data">
+                📖 Explication — .data() et data-*
+            </button>
+            <button class="expl-toggle" data-target="expl-bonus">
+                📖 Explication — BONUS : Barre de progression
+            </button>
+
+            <div class="expl-panel" id="expl-nav">
+                <h4>TODO 1 — Navigation par clic : les 5 étapes</h4>
+                <p>L'idée centrale : chaque <code>&lt;li&gt;</code> porte <code>data-page="homePage"</code>. jQuery lit cet attribut pour savoir quelle section afficher.</p>
+                <div class="block">
+$(".navLink").on("click", function() {
+
+  // ÉTAPE A — Reset de l'état actif
+  $(".navLink").removeClass("activeNav");
+  $(this).addClass("activeNav");
+
+  // ÉTAPE B — Lire l'ID de la page cible
+  let page = $(this).data("page");
+
+  // ÉTAPE C — Cacher toutes les sections
+  $(".page").removeClass("activePage").hide();
+
+  // ÉTAPE D — Afficher la bonne section
+  $("#" + page).fadeIn(400).addClass("activePage");
+
+  // ÉTAPE E — Toast de notification
+  $("#toast")
+    .text("→ " + page)
+    .show()
+    .delay(1800)
+    .fadeOut(400);
+});</div>
+                <p><span class="bad">Erreur fréquente :</span> appeler <code>.hide()</code> ET <code>.removeClass("activePage")</code> sans <code>.show()</code> ensuite → la page ne réapparaît jamais. Toujours faire le couple <code>hide</code> → <code>fadeIn</code>.</p>
+                <br>
+                <p><span class="bad">Autre erreur :</span> oublier le <code>#</code> dans <code>"#" + page</code>. Sans le <code>#</code>, jQuery cherche une balise HTML (ex: <code>homepage</code>) au lieu d'un ID.</p>
+            </div>
+
+            <div class="expl-panel" id="expl-toggle">
+                <h4>TODO 2 — Toggle Menu avec .animate()</h4>
+                <p>La valeur <code>"toggle"</code> dans <code>.animate({ width: "toggle" })</code> est un raccourci jQuery : si la largeur est > 0, il l'anime vers 0. Sinon, il la restaure à sa valeur d'origine.</p>
+                <div class="block">
+$("#toggleMenu").on("click", function() {
+  $("#sidebar").animate({ width: "toggle" }, 400);
+});</div>
+                <p><span class="good">Alternative :</span> on peut tester l'état visible/caché avec <code>.is(":visible")</code> et choisir manuellement :</p>
+                <div class="block">
+if ($("#sidebar").is(":visible")) {
+  $("#sidebar").animate({ width: "0" }, 400);
+} else {
+  $("#sidebar").animate({ width: "240px" }, 400);
+}</div>
+                <p>Les deux approches fonctionnent. <code>"toggle"</code> est plus concis, mais la version <code>if/else</code> est plus explicite pour comprendre ce qui se passe.</p>
+            </div>
+
+            <div class="expl-panel" id="expl-data">
+                <h4>.data() — Lire les attributs data-*</h4>
+                <p>En HTML5, on peut stocker des données personnalisées sur n'importe quel élément avec des attributs <code>data-*</code>.</p>
+                <div class="block">
+&lt;!-- HTML --&gt;
+&lt;li data-page="homePage" data-color="rouge"&gt;...&lt;/li&gt;
+
+// jQuery : lire
+$(this).data("page")    // → "homePage"
+$(this).data("color")   // → "rouge"
+
+// Équivalent natif JS (moins pratique) :
+this.getAttribute("data-page")  // → "homePage"</div>
+                <p><span class="good">Avantage de .data() :</span> jQuery convertit automatiquement le type. <code>data-target="42"</code> retourne le nombre <code>42</code>, pas la chaîne <code>"42"</code>.</p>
+            </div>
+
+            <div class="expl-panel" id="expl-bonus">
+                <h4>BONUS — Barre de progression avec Set</h4>
+                <p>Un <code>Set</code> JavaScript est une collection de valeurs <strong>uniques</strong>. On l'utilise ici pour ne compter chaque page visitée qu'une seule fois.</p>
+                <div class="block">
+// Déclarer au début du script
+const visitedPages = new Set(["homePage"]);
+
+// Dans le clic .navLink, ajouter la page visitée
+visitedPages.add(page); // add() ignore les doublons
+
+// Calculer le pourcentage
+const pct = visitedPages.size / 5 * 100;
+
+// Animer la barre
+$("#progressFill").animate({ width: pct + "%" }, 400);</div>
+                <p><code>Set.size</code> = nombre d'éléments uniques. Si on visite 3 pages différentes : <code>size = 3</code>, donc <code>3/5*100 = 60%</code>.</p>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<div id="toast"></div>
+
+<footer>
+    Développé par&nbsp;
+    <a href="https://www.pixelbaobab.com" target="_blank" rel="noopener"
+       style="color:#ff4d2e;text-decoration:none;font-weight:bold;"
+       onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'"
+    >PixelBaobab</a>
+    &nbsp;·&nbsp; jQuery Academy &nbsp;·&nbsp; 2026
+</footer>
+
+<script>
+/* ================================================================
+   ÉTAT : pages visitées (Set → valeurs uniques)
+================================================================ */
+const visitedPages = new Set(["homePage"]);
+const TOTAL_PAGES  = 5;
+
+
+/* ================================================================
+   ✅ TODO 1 — NAVIGATION PAR CLIC
+   ─────────────────────────────────────────────────────────────────
+   PRINCIPE : lire data-page, gérer l'état actif, afficher la page.
+   Le Set visitedPages permet de tracker les pages vues sans doublon.
+================================================================ */
+$(".navLink").on("click", function() {
+
+    // A — État actif
+    $(".navLink").removeClass("activeNav");
+    $(this).addClass("activeNav");
+
+    // B — Lire la cible
+    let page = $(this).data("page");
+
+    // C — Cacher tout
+    $(".page").removeClass("activePage").hide();
+
+    // D — Afficher la bonne page
+    $("#" + page).fadeIn(400).addClass("activePage");
+
+    // E — Toast
+    $("#toast").text("→ " + page).show().delay(1800).fadeOut(400);
+
+    // BONUS — Barre de progression
+    visitedPages.add(page);
+    const pct = (visitedPages.size / TOTAL_PAGES) * 100;
+    $("#progressFill").animate({ width: pct + "%" }, 400);
+});
+
+
+/* ================================================================
+   ✅ TODO 2 — TOGGLE MENU
+   ─────────────────────────────────────────────────────────────────
+   "toggle" dans .animate() = alterne entre 0 et la valeur d'origine.
+================================================================ */
+$("#toggleMenu").on("click", function() {
+    $("#sidebar").animate({ width: "toggle" }, 400);
+});
+
+
+/* ================================================================
+   BOUTONS D'EXPLICATION
+================================================================ */
+$(".expl-toggle").on("click", function() {
+    const id = $(this).data("target");
+    $("#" + id).toggleClass("visible");
+});
+</script>
+</body>
+</html>
