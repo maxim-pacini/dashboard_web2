@@ -77,10 +77,14 @@ h1 { font-size: 42px; margin-bottom: 6px; }
     transition: transform 0.3s;
     font-family: monospace;
 }
-.lesson.open .lesson-head .toggle { transform: rotate(45deg); }
+.lesson.open .lesson-head .toggle { 
+    transform: rotate(45deg); 
+    /* display: block;  une erreur dans le css ???*/
+}
 
 /* Corps de la leçon — CACHÉ par défaut */
 .lesson-body { display: none; padding: 28px; }
+
 
 /* Bloc démo : code à gauche, résultat à droite */
 .demo {
@@ -541,6 +545,17 @@ function updateProgress() {
 $(".toc-btn").on("click", function() {
 
     // Ton code ici ↓
+    const target = $(this).data("target");
+
+    $(".lesson").removeClass("open");
+    $("#" + target).addClass("open");
+
+    $("html, body").animate({
+        scrollTop: $("#" + target).offset().top - 80
+    }, 500);
+
+    updateProgress();
+
 
 });
 
@@ -558,7 +573,8 @@ $(".toc-btn").on("click", function() {
 $(".lesson-head").on("click", function() {
 
     // Ton code ici ↓
-
+    $(this).closest(".lesson").toggleClass("open");
+    updateProgress();
 });
 
 
@@ -570,6 +586,11 @@ $("#btn-1a").on("click", function() {
     // Puis setTimeout pour reset après 1500ms
 
     // Ton code ici ↓
+    $("#d1a-list .item").css("background", "#ffd23f");
+
+    setTimeout(function (){
+        $("#d1a-list .item").css("background", "white");
+    }, 1500);
 });
 
 
