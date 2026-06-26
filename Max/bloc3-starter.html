@@ -310,15 +310,16 @@ h1 {
 function updateClock(){
 
     const time = new Date();
-    const heure = time.toLocalTimeString("fr-FR",{ 
+    const heure = time.toLocaleTimeString("fr-FR",{ 
         hour:"2-digit", minute:"2-digit"
     });
     $("#clock").text(heure);
 
-    updateClock();
-    setInterval(updateClock,60_000);
+
 }
 
+updateClock();
+setInterval(updateClock,60_000);
 
 /* ============================================================
    TODO 2 — Compteurs animés avec $().animate()
@@ -345,6 +346,22 @@ function updateClock(){
 $(".counter").each(function() {
 
     // Ton code ici ↓
+    $(".counter").each(function (){
+        const target = $(this).data("target");
+        let $el = $(this);
+
+        $({ n: 0 }).animate({ n: target }, {
+               duration: 1500,
+               easing: "swing",
+               step: function() {
+                   $el.text( Math.floor(this.n).toLocaleString("fr-FR") );
+               },
+               complete: function() {
+                   $el.text( target.toLocaleString("fr-FR") );
+               }
+           });
+
+    });
 
 });
 
@@ -364,6 +381,14 @@ $(".counter").each(function() {
 $("#barChart .bar").each(function(i) {
 
     // Ton code ici ↓
+    $(".bar").each(function (){
+        const h = $(this).data("h");
+
+        $(this)
+            .delay(i * 100 )
+            .animate({ height: h + "%"}, 700);
+
+    });
 
 });
 
@@ -387,6 +412,9 @@ function animateFeed() {
     $(".feed-item").each(function(i) {
 
         // Ton code ici ↓
+        $(this)
+            .delay(i * 200)
+            .animate({ opacity: 1}, 400)
 
     });
 }
@@ -406,6 +434,15 @@ animateFeed(); // appel initial
 $("#refreshFeed").on("click", function() {
 
     // Ton code ici ↓
+    $(this).addClass("spinning")
+
+    setTimeout( function(){
+        $btn.removeClass("spinning");
+    }, 600);
+
+    setTimeout(function(){
+        animateFeed();
+    }, 300)
 
 });
 
