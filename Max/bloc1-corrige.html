@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLOC 1 — CORRIGÉ — Authentification & Regex</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4efe6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* ── Bandeau correction ───────────────────────────── */
+.correction-banner {
+    width: 100%;
+    max-width: 460px;
+    background: #1aa179;
+    color: white;
+    padding: 10px 18px;
+    font-family: monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border-bottom: 3px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.correction-banner .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: white;
+    flex-shrink: 0;
+}
+
+.auth-box {
+    background: white;
+    border: 2px solid #1a1a1a;
+    padding: 40px;
+    width: 460px;
+}
+.auth-box h1 { font-size: 28px; margin-bottom: 6px; }
+.auth-box .sub { color: #7a7268; font-size: 14px; margin-bottom: 30px; }
+
+.tabs { display: flex; gap: 0; margin-bottom: 30px; border-bottom: 2px solid #1a1a1a; }
+.tab {
+    padding: 12px 0; margin-right: 28px;
+    font-family: monospace; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    cursor: pointer; background: none; border: none; color: #7a7268;
+    position: relative;
+}
+.tab.active { color: #1a1a1a; font-weight: bold; }
+.tab.active::after {
+    content: ""; position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 3px; background: #ff4d2e;
+}
+
+.field { margin-bottom: 20px; }
+.field label {
+    display: block; font-family: monospace;
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 6px;
+}
+.field input {
+    width: 100%; padding: 12px 0;
+    border: none; border-bottom: 2px solid #1a1a1a;
+    background: transparent; font-size: 16px; outline: none;
+    transition: border-color 0.2s;
+}
+.field input:focus { border-bottom-color: #2d5fff; }
+.field .hint {
+    margin-top: 6px; font-family: monospace;
+    font-size: 11px; color: #7a7268; min-height: 14px;
+}
+.field.error input  { border-bottom-color: #ff4d2e; }
+.field.error .hint  { color: #ff4d2e; font-weight: bold; }
+.field.ok    input  { border-bottom-color: #1aa179; }
+.field.ok    .hint  { color: #1aa179; font-weight: bold; }
+.field.ok    .hint::before { content: "✓ "; }
+
+.strength { display: flex; gap: 4px; margin-top: 8px; }
+.strength span {
+    flex: 1; height: 4px; background: #ddd;
+    border-radius: 2px; transition: background 0.3s;
+}
+.strength span.faible { background: #ff4d2e; }
+.strength span.moyen  { background: #ffd23f; }
+.strength span.fort   { background: #1aa179; }
+
+.submit-btn {
+    width: 100%; padding: 16px;
+    background: #1a1a1a; color: white; border: none;
+    font-family: monospace; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    cursor: pointer; margin-top: 10px;
+    transition: background 0.2s, transform 0.15s;
+}
+.submit-btn:hover { background: #ff4d2e; }
+.submit-btn.shake { animation: shake 0.4s; }
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-8px); }
+    75%      { transform: translateX(8px); }
+}
+
+.flash {
+    margin-top: 16px; padding: 12px 16px;
+    font-family: monospace; font-size: 12px;
+    border-left: 4px solid; display: none;
+}
+.flash.ok  { background: rgba(26,161,121,0.1); border-color: #1aa179; color: #1aa179; }
+.flash.err { background: rgba(255,77,46,0.1);  border-color: #ff4d2e; color: #ff4d2e; }
+
+#welcome { text-align: center; display: none; }
+#welcome h2 { font-size: 36px; margin-bottom: 12px; }
+#welcome p  { color: #7a7268; margin-bottom: 24px; }
+#welcome .logout {
+    padding: 10px 24px; background: #1a1a1a;
+    color: white; border: none; font-family: monospace; cursor: pointer;
+}
+
+/* ── Bloc d'explication (affiché lors de la correction) ── */
+.explication {
+    background: #fff9e6;
+    border-left: 4px solid #ffd23f;
+    padding: 16px 18px;
+    margin: 24px 0 0;
+    font-size: 13px;
+    line-height: 1.7;
+    display: none; /* caché par défaut, ouvert par le prof */
+    width: 460px;
+}
+.explication.visible { display: block; }
+.explication h4 {
+    font-family: monospace; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: #1a1a1a; margin-bottom: 8px;
+}
+.explication code {
+    background: #1a1a1a; color: #a3e635;
+    padding: 2px 6px; font-size: 12px;
+    font-family: monospace;
+}
+.explication .good { color: #1aa179; font-weight: bold; }
+.explication .bad  { color: #ff4d2e; font-weight: bold; }
+
+.toggle-expl {
+    width: 460px;
+    padding: 8px 16px;
+    background: #ffd23f;
+    border: 2px solid #1a1a1a;
+    font-family: monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    cursor: pointer; text-align: left;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+.toggle-expl:hover { background: #f0c800; }
+</style>
+</head>
+<body>
+
+<!-- Bandeau "Version corrigée" -->
+<div class="correction-banner">
+    <span class="dot"></span>
+    Version corrigée — Bloc 1 / Authentification & Regex
+</div>
+
+
+<div id="authBox" class="auth-box">
+    <h1>jQuery Academy</h1>
+    <p class="sub">Crée ton compte pour accéder au dashboard.</p>
+
+    <div class="tabs">
+        <button class="tab active" data-form="signupForm">Inscription</button>
+        <button class="tab"        data-form="loginForm">Connexion</button>
+    </div>
+
+    <div id="signupForm">
+        <div class="field" id="f-username">
+            <label for="signup-username">Nom d'utilisateur</label>
+            <input type="text" id="signup-username" placeholder="ex: jean_dev" autocomplete="off">
+            <div class="hint">3 à 16 caractères : lettres, chiffres, _ ou -</div>
+        </div>
+        <div class="field" id="f-email">
+            <label for="signup-email">Email</label>
+            <input type="email" id="signup-email" placeholder="prenom@domaine.com" autocomplete="off">
+            <div class="hint">Format email standard requis</div>
+        </div>
+        <div class="field" id="f-password">
+            <label for="signup-password">Mot de passe</label>
+            <input type="password" id="signup-password" placeholder="••••••••" autocomplete="off">
+            <div class="hint">8+ caractères, 1 majuscule, 1 chiffre, 1 spécial</div>
+            <div class="strength">
+                <span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <button class="submit-btn" id="signupBtn">Créer le compte →</button>
+        <div class="flash" id="signupFlash"></div>
+    </div>
+
+    <div id="loginForm" style="display:none">
+        <div class="field" id="f-login-email">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="prenom@domaine.com" autocomplete="off">
+            <div class="hint">&nbsp;</div>
+        </div>
+        <div class="field" id="f-login-password">
+            <label for="login-password">Mot de passe</label>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="off">
+            <div class="hint">&nbsp;</div>
+        </div>
+        <button class="submit-btn" id="loginBtn">Se connecter →</button>
+        <div class="flash" id="loginFlash"></div>
+    </div>
+</div>
+
+<div id="welcome" class="auth-box">
+    <h2>Bienvenue 🎉</h2>
+    <p id="welcomeMsg">Connexion réussie !</p>
+    <button class="logout" id="logoutBtn">Se déconnecter</button>
+</div>
+
+
+<!-- ================================================================
+     BOUTONS D'EXPLICATION — à ouvrir pendant la correction en classe
+================================================================ -->
+
+<button class="toggle-expl" data-target="expl-regex">
+    📖 Explication — TODO 1·2·3 : Les Regex
+</button>
+<div class="explication" id="expl-regex">
+    <h4>Pourquoi une Regex ?</h4>
+    <p>Une <strong>expression régulière</strong> décrit un format de texte. On la teste avec
+    <code>.test(valeur)</code> qui retourne <code>true</code> ou <code>false</code>.</p>
+    <br>
+    <p><strong>TODO 1 — Username :</strong> <code>/^[a-zA-Z0-9_-]{3,16}$/</code></p>
+    <p>
+        <code>^</code> = début de chaîne &nbsp;|&nbsp;
+        <code>$</code> = fin de chaîne &nbsp;|&nbsp;
+        <code>[a-zA-Z0-9_-]</code> = caractères autorisés &nbsp;|&nbsp;
+        <code>{3,16}</code> = entre 3 et 16 fois
+    </p>
+    <br>
+    <p><strong>TODO 2 — Email :</strong> <code>/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/</code></p>
+    <p>
+        <code>+</code> = un ou plusieurs &nbsp;|&nbsp;
+        <code>@</code> = le @ littéral &nbsp;|&nbsp;
+        <code>\.</code> = un vrai point (le <code>\</code> échappe le point) &nbsp;|&nbsp;
+        <code>{2,}</code> = au moins 2 lettres pour le domaine
+    </p>
+    <br>
+    <p><strong>TODO 3 — Password :</strong>
+    <code>/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&amp;*]).{8,}$/</code></p>
+    <p>
+        <code>(?=.*[A-Z])</code> = <strong>lookahead</strong> : "quelque part dans la chaîne, il doit y avoir une majuscule". <br>
+        Le lookahead <span class="good">vérifie sans consommer</span> les caractères — c'est pourquoi on peut en enchaîner plusieurs. <br>
+        <code>.{8,}</code> = au moins 8 caractères de n'importe quel type.
+    </p>
+    <br>
+    <p class="bad">Erreur fréquente :</p>
+    <p>Oublier le <code>^</code> et <code>$</code> → la regex valide des chaînes partielles.</p>
+    <p>Ex : sans <code>^$</code>, <code>"abc123!A extra"</code> passerait la validation.</p>
+</div>
+
+<button class="toggle-expl" data-target="expl-tabs">
+    📖 Explication — TODO 4 : Tabs jQuery
+</button>
+<div class="explication" id="expl-tabs">
+    <h4>Principe du tab switcher</h4>
+    <p>Chaque bouton <code>.tab</code> porte un <code>data-form="nomDuForm"</code>. <br>
+    jQuery lit cet attribut avec <code>$(this).data("form")</code>.</p>
+    <br>
+    <p><strong>Les 4 étapes :</strong></p>
+    <p>1. <code>$(".tab").removeClass("active")</code> — on remet tout à zéro</p>
+    <p>2. <code>$(this).addClass("active")</code> — on active celui cliqué</p>
+    <p>3. <code>let target = $(this).data("form")</code> — on lit quelle form afficher</p>
+    <p>4. <code>$(".auth-form").hide()</code> puis <code>$("#"+target).fadeIn(300)</code></p>
+    <br>
+    <p class="bad">Erreur fréquente :</p>
+    <p>Utiliser <code>$(this).attr("data-form")</code> au lieu de <code>$(this).data("form")</code>. Les deux marchent, mais <code>.data()</code> est le raccourci jQuery recommandé pour les attributs <code>data-*</code>.</p>
+</div>
+
+<button class="toggle-expl" data-target="expl-validation">
+    📖 Explication — TODO 5·6·7 : Validation temps réel
+</button>
+<div class="explication" id="expl-validation">
+    <h4>Pattern : tester au keyup</h4>
+    <p>L'événement <code>keyup</code> se déclenche à chaque relâchement de touche. <br>
+    On y lit <code>.val()</code> et on teste la regex.</p>
+    <br>
+    <p><strong>Schéma type :</strong></p>
+    <p>
+        <code>$("#champ").on("keyup", function() {</code><br>
+        &nbsp;&nbsp;<code>let val = $(this).val();</code><br>
+        &nbsp;&nbsp;<code>$("#f-champ").removeClass("ok error");</code><br>
+        &nbsp;&nbsp;<code>if (REGEX.champ.test(val)) {</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<code>$("#f-champ").addClass("ok");</code><br>
+        &nbsp;&nbsp;<code>} else {</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<code>$("#f-champ").addClass("error");</code><br>
+        &nbsp;&nbsp;<code>}</code><br>
+        <code>});</code>
+    </p>
+    <br>
+    <p><strong>TODO 7 — Jauge de force :</strong></p>
+    <p>On calcule un score de 0 à 4 selon 4 critères. Puis <code>.each()</code> sur les 4 <code>&lt;span&gt;</code> : si <code>i &lt; score</code>, on ajoute la classe de couleur.</p>
+    <br>
+    <p class="bad">Erreur fréquente :</p>
+    <p>Ne pas faire <code>.removeClass("ok error")</code> avant de retester → les classes s'accumulent au lieu de basculer.</p>
+</div>
+
+<button class="toggle-expl" data-target="expl-submit">
+    📖 Explication — TODO 8·9 : Inscription & Connexion
+</button>
+<div class="explication" id="expl-submit">
+    <h4>Soumission du formulaire</h4>
+    <p>On re-teste les 3 regex au moment du clic (même si la validation temps réel a déjà tourné). C'est une <strong>validation de sécurité finale</strong>.</p>
+    <br>
+    <p><strong>Pattern erreurs :</strong></p>
+    <p>On collecte dans un tableau <code>let errors = [];</code><br>
+    <code>if (!REGEX.username.test(u)) errors.push("message");</code><br>
+    <code>if (errors.length > 0) { /* afficher */ return; }</code><br>
+    Le <code>return</code> est essentiel — il stoppe l'exécution si erreur.</p>
+    <br>
+    <p><strong>Effet shake :</strong> <code>$(this).addClass("shake")</code> puis <code>setTimeout(() => $(this).removeClass("shake"), 400)</code> — on retire la classe après l'animation pour pouvoir la ré-ajouter au prochain clic.</p>
+    <br>
+    <p><strong>TODO 9 — Connexion :</strong></p>
+    <p>On compare simplement les valeurs saisies avec <code>registeredUser.email</code> et <code>registeredUser.password</code>. En production, les mots de passe seraient hachés côté serveur — ici c'est une simulation pédagogique.</p>
+</div>
+
+
+<!-- ================================================================
+     FOOTER PIXELBAOBAB
+================================================================ -->
+<footer style="
+    margin-top: 40px; padding: 18px 30px;
+    background: #1a1a1a; color: rgba(255,250,240,0.5);
+    text-align: center; font-family: monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    border-top: 3px solid #ff4d2e; width: 100%;
+">
+    Développé par&nbsp;
+    <a href="https://www.pixelbaobab.com" target="_blank" rel="noopener"
+       style="color:#ff4d2e;text-decoration:none;font-weight:bold;"
+       onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'"
+    >PixelBaobab</a>
+    &nbsp;·&nbsp; jQuery Academy &nbsp;·&nbsp; 2026
+</footer>
+
+
+<script>
+/* ================================================================
+   ÉTAT GLOBAL
+================================================================ */
+let registeredUser = null;
+
+
+/* ================================================================
+   ✅ TODO 1·2·3 — LES REGEX
+   ─────────────────────────────────────────────────────────────────
+   POURQUOI CES PATTERNS ?
+   • username : ^ et $ encadrent la chaîne entière. [a-zA-Z0-9_-]
+     définit les caractères autorisés. {3,16} = entre 3 et 16 fois.
+   • email : le \. échappe le point (sinon . = n'importe quel char).
+     {2,} = domaine d'au moins 2 lettres (ex: .be, .com, .org).
+   • password : les (?=...) sont des lookaheads — ils vérifient
+     la présence d'un pattern SANS avancer dans la chaîne.
+     On peut donc les enchaîner pour exiger plusieurs conditions.
+================================================================ */
+const REGEX = {
+    username: /^[a-zA-Z0-9_-]{3,16}$/,
+    email:    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?/.,;:]).{8,}$/,
+
+    // Helpers pour la jauge (testés séparément)
+    hasLower:   /[a-z]/,
+    hasUpper:   /[A-Z]/,
+    hasDigit:   /\d/,
+    hasSpecial: /[!@#$%^&*()_\-+=<>?/.,;:]/,
+};
+
+
+/* ================================================================
+   ✅ TODO 4 — TABS : basculer entre Inscription et Connexion
+   ─────────────────────────────────────────────────────────────────
+   PRINCIPE : chaque .tab porte data-form="idDuFormulaire".
+   On lit cet attribut avec .data("form"), on cache tous les
+   formulaires, puis on affiche le bon avec fadeIn.
+================================================================ */
+$(".tab").on("click", function() {
+    // 1. Reset de l'état actif sur tous les tabs
+    $(".tab").removeClass("active");
+    // 2. Activer le tab cliqué
+    $(this).addClass("active");
+    // 3. Lire quelle form afficher
+    let target = $(this).data("form");
+    // 4. Cacher tout, puis afficher la bonne form
+    $("#signupForm, #loginForm").hide();
+    $("#" + target).fadeIn(300);
+    // 5. Cacher les éventuels messages flash
+    $(".flash").slideUp(200);
+});
+
+
+/* ================================================================
+   ✅ TODO 5 — VALIDATION TEMPS RÉEL : username
+   ─────────────────────────────────────────────────────────────────
+   PRINCIPE : on écoute keyup, on teste la regex, on applique
+   la classe ok ou error sur le .field parent, et on met à jour
+   le message .hint avec une explication précise.
+================================================================ */
+$("#signup-username").on("keyup", function() {
+    const val   = $(this).val();
+    const field = $("#f-username");
+
+    // Important : toujours reset avant de retester
+    field.removeClass("ok error");
+
+    if (val.length === 0) {
+        field.find(".hint").text("3 à 16 caractères : lettres, chiffres, _ ou -");
+    } else if (REGEX.username.test(val)) {
+        field.addClass("ok");
+        field.find(".hint").text("Nom valide");
+    } else {
+        field.addClass("error");
+        // Message d'erreur précis selon le problème
+        if (val.length < 3)       field.find(".hint").text("Trop court (min 3 caractères)");
+        else if (val.length > 16) field.find(".hint").text("Trop long (max 16 caractères)");
+        else                      field.find(".hint").text("Caractères interdits — lettres/chiffres/_/- uniquement");
+    }
+});
+
+
+/* ================================================================
+   ✅ TODO 6 — VALIDATION TEMPS RÉEL : email
+   ─────────────────────────────────────────────────────────────────
+   Même logique que le username. La regex email est plus complexe
+   mais l'utilisation reste identique : .test(val).
+================================================================ */
+$("#signup-email").on("keyup", function() {
+    const val   = $(this).val();
+    const field = $("#f-email");
+
+    field.removeClass("ok error");
+
+    if (val.length === 0) {
+        field.find(".hint").text("Format email standard requis");
+    } else if (REGEX.email.test(val)) {
+        field.addClass("ok");
+        field.find(".hint").text("Email valide");
+    } else {
+        field.addClass("error");
+        field.find(".hint").text("Format invalide — ex: prenom@domaine.com");
+    }
+});
+
+
+/* ================================================================
+   ✅ TODO 7 — VALIDATION TEMPS RÉEL + JAUGE : password
+   ─────────────────────────────────────────────────────────────────
+   DEUX PARTIES :
+   A) Jauge de force : score de 0 à 4, on colorie les spans.
+      On utilise .each(function(i){}) pour boucler sur les 4 spans.
+      Si i < score → classe de couleur, sinon → on vide les classes.
+   B) Validation du champ : même pattern que username/email.
+================================================================ */
+$("#signup-password").on("keyup", function() {
+    const val   = $(this).val();
+    const field = $("#f-password");
+
+    // ── A) Calcul du score ──────────────────────────────
+    let score = 0;
+    if (val.length >= 8)              score++;
+    if (REGEX.hasUpper.test(val) && REGEX.hasLower.test(val)) score++;
+    if (REGEX.hasDigit.test(val))     score++;
+    if (REGEX.hasSpecial.test(val))   score++;
+
+    // ── B) Mise à jour de la jauge ──────────────────────
+    // .each(function(i)) — i = index du span (0, 1, 2, 3)
+    $(".strength span").each(function(i) {
+        $(this).removeClass("faible moyen fort");
+        if (i < score) {
+            if (score <= 1)      $(this).addClass("faible");
+            else if (score <= 3) $(this).addClass("moyen");
+            else                 $(this).addClass("fort");
+        }
+    });
+
+    // ── C) Validation du champ ──────────────────────────
+    field.removeClass("ok error");
+
+    if (val.length === 0) {
+        field.find(".hint").text("8+ caractères, 1 majuscule, 1 chiffre, 1 spécial");
+    } else if (REGEX.password.test(val)) {
+        field.addClass("ok");
+        field.find(".hint").text("Mot de passe robuste");
+    } else {
+        field.addClass("error");
+        // Message ciblé selon ce qui manque
+        const missing = [];
+        if (val.length < 8)              missing.push("8+ caractères");
+        if (!REGEX.hasUpper.test(val))   missing.push("majuscule");
+        if (!REGEX.hasLower.test(val))   missing.push("minuscule");
+        if (!REGEX.hasDigit.test(val))   missing.push("chiffre");
+        if (!REGEX.hasSpecial.test(val)) missing.push("caractère spécial");
+        field.find(".hint").text("Manque : " + missing.join(", "));
+    }
+});
+
+
+/* ================================================================
+   ✅ TODO 8 — BOUTON INSCRIPTION
+   ─────────────────────────────────────────────────────────────────
+   On reteste les 3 regex en validation finale.
+   Si une erreur → on collecte dans un tableau, on shake le bouton,
+   on affiche le flash rouge. Le return arrête l'exécution.
+   Si tout OK → on stocke dans registeredUser et on appelle doLogin().
+================================================================ */
+$("#signupBtn").on("click", function() {
+    const username = $("#signup-username").val();
+    const email    = $("#signup-email").val();
+    const password = $("#signup-password").val();
+    const $btn     = $(this);
+
+    // Validation finale (même si le temps réel a déjà tourné)
+    const errors = [];
+    if (!REGEX.username.test(username)) errors.push("Nom d'utilisateur invalide");
+    if (!REGEX.email.test(email))       errors.push("Email invalide");
+    if (!REGEX.password.test(password)) errors.push("Mot de passe trop faible");
+
+    if (errors.length > 0) {
+        // Animation shake sur le bouton
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        // Affichage des erreurs
+        $("#signupFlash")
+            .removeClass("ok").addClass("err")
+            .text("⚠ " + errors.join(" · "))
+            .slideDown(300);
+        return; // ← IMPORTANT : stoppe l'exécution ici
+    }
+
+    // Tout est valide : on enregistre le compte
+    registeredUser = { username, email, password,
+        createdAt: new Date().toLocaleDateString("fr-FR") };
+
+    $("#signupFlash")
+        .removeClass("err").addClass("ok")
+        .text("✓ Compte créé ! Connexion en cours…")
+        .slideDown(300);
+
+    // Auto-login après un court délai
+    setTimeout(doLogin, 800);
+});
+
+
+/* ================================================================
+   ✅ TODO 9 — BOUTON CONNEXION
+   ─────────────────────────────────────────────────────────────────
+   On vérifie : 1) qu'un compte existe, 2) que l'email est valide,
+   3) que email + password correspondent au compte enregistré.
+================================================================ */
+$("#loginBtn").on("click", function() {
+    const email    = $("#login-email").val();
+    const password = $("#login-password").val();
+    const $btn     = $(this);
+
+    // Garde 1 : aucun compte enregistré
+    if (!registeredUser) {
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        $("#loginFlash").removeClass("ok").addClass("err")
+            .text("⚠ Aucun compte — inscris-toi d'abord").slideDown(300);
+        return;
+    }
+
+    // Garde 2 : email invalide
+    if (!REGEX.email.test(email)) {
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        $("#loginFlash").removeClass("ok").addClass("err")
+            .text("⚠ Email invalide").slideDown(300);
+        return;
+    }
+
+    // Garde 3 : mauvais identifiants
+    if (email !== registeredUser.email || password !== registeredUser.password) {
+        $btn.addClass("shake");
+        setTimeout(() => $btn.removeClass("shake"), 400);
+        $("#loginFlash").removeClass("ok").addClass("err")
+            .text("⚠ Email ou mot de passe incorrect").slideDown(300);
+        return;
+    }
+
+    // Tout OK !
+    $("#loginFlash").removeClass("err").addClass("ok")
+        .text("✓ Connexion réussie").slideDown(300);
+    setTimeout(doLogin, 500);
+});
+
+
+/* ================================================================
+   LOGIQUE FOURNIE — doLogin / logout
+================================================================ */
+function doLogin() {
+    $("#authBox").fadeOut(400, function() {
+        const msg = "Bienvenue <strong>" + registeredUser.username + "</strong> !";
+        $("#welcomeMsg").html(msg);
+        $("#welcome").fadeIn(400);
+    });
+}
+
+$("#logoutBtn").on("click", function() {
+    $("#welcome").fadeOut(400, function() {
+        $("#login-email, #login-password").val("");
+        $(".flash").hide();
+        $(".tab").first().trigger("click");
+        $("#authBox").fadeIn(400);
+    });
+});
+
+
+/* ================================================================
+   BOUTONS D'EXPLICATION — toggle visible/caché
+================================================================ */
+$(".toggle-expl").on("click", function() {
+    const targetId = $(this).data("target");
+    $("#" + targetId).toggleClass("visible");
+    const isOpen = $("#" + targetId).hasClass("visible");
+    $(this).text(isOpen
+        ? $(this).text().replace("📖", "📕")
+        : $(this).text().replace("📕", "📖")
+    );
+});
+
+</script>
+</body>
+</html>
